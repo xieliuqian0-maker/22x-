@@ -3,6 +3,9 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PointerLockControls, ContactShadows, Text, Float, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
+// 资源前缀：本地是 /，GitHub Pages 是 /22x-
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 function Box({ position, size, color, material = {}, onClick, castShadow = true, receiveShadow = true, rotation }) {
   return (
     <mesh position={position} scale={size} rotation={rotation} castShadow={castShadow} receiveShadow={receiveShadow} onClick={onClick}>
@@ -31,7 +34,7 @@ function Room({ onComputer, onHeadphones, onGift, giftOpen }) {
     // 优先检测视频，存在就用视频
     const videoProbe = document.createElement('video');
     videoProbe.preload = 'metadata';
-    videoProbe.src = '/laptop-screen.mp4';
+    videoProbe.src = `${ASSET_BASE}laptop-screen.mp4`;
     videoProbe.onloadedmetadata = () => {
       videoProbe.pause();
       videoProbe.remove();
@@ -43,7 +46,7 @@ function Room({ onComputer, onHeadphones, onGift, giftOpen }) {
       const imgProbe = new Image();
       imgProbe.onload = () => setScreenType('image');
       imgProbe.onerror = () => setScreenType('none');
-      imgProbe.src = '/laptop-screen.png';
+      imgProbe.src = `${ASSET_BASE}laptop-screen.png`;
     };
     // 5s 超时兜底
     const timer = setTimeout(() => setScreenType(s => s === 'none' ? 'none' : s), 5000);
@@ -888,9 +891,6 @@ export default function App() {
   // ===== 检测是否移动端 =====
   const isMobile = typeof navigator !== 'undefined' &&
     (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 800);
-
-  // ===== 资源前缀：本地是 /，GitHub Pages 是 /22x- =====
-  const ASSET_BASE = import.meta.env.BASE_URL;
 
   // ===== 耳机播放列表（4 首歌）=====
   const HEADPHONE_PLAYLIST = [
