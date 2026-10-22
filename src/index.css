@@ -1,0 +1,389 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600&display=swap');
+
+:root { font-family: 'DM Sans', 'Noto Serif SC', sans-serif; color: #f4eee6; background: #080b13; font-synthesis: none; text-rendering: optimizeLegibility; }
+* { box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+button { font: inherit; }
+.app-shell { position: relative; width: 100%; height: 100%; min-height: 520px; background: #080b13; }
+canvas { display: block; width: 100%; height: 100%; outline: none; }
+.topbar { position: absolute; top: 0; left: 0; right: 0; height: 72px; padding: 0 34px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.08); background: linear-gradient(180deg, rgba(5,8,14,.7), transparent); pointer-events: none; }
+.brand { font-size: 11px; font-weight: 700; letter-spacing: .19em; display: flex; align-items: center; gap: 10px; }
+.brand-dot { width: 7px; height: 7px; border-radius: 50%; background: #d8ad76; box-shadow: 0 0 12px #d8ad76; }
+.top-tag { color: #9ba4b5; font-size: 9px; letter-spacing: .22em; }
+.welcome-panel { position: absolute; left: clamp(24px, 8vw, 120px); top: 50%; transform: translateY(-43%); width: min(430px, calc(100% - 48px)); padding: 30px 0; text-shadow: 0 2px 22px rgba(0,0,0,.4); }
+.eyebrow { color: #d9b583; font-size: 10px; font-weight: 700; letter-spacing: .23em; margin-bottom: 20px; }
+h1 { font-family: 'Noto Serif SC', serif; font-size: clamp(36px, 5vw, 62px); line-height: 1.34; font-weight: 500; letter-spacing: .04em; margin: 0 0 18px; }
+h1 em { font-style: normal; color: #dfbd91; }
+.welcome-panel p { font-size: 13px; color: #b6bdca; letter-spacing: .05em; line-height: 1.9; margin: 0 0 28px; }
+.primary-btn { border: 1px solid rgba(232,202,162,.55); color: #17131a; background: #e3c49b; border-radius: 3px; padding: 13px 20px; min-width: 150px; font-size: 12px; letter-spacing: .08em; font-weight: 700; cursor: pointer; transition: background .2s, transform .2s; }
+.primary-btn:hover { background: #f0d7b5; transform: translateY(-1px); }
+.primary-btn span { margin-left: 20px; font-size: 16px; }
+.hint { margin-top: 15px; color: #737d8e; font-size: 10px; letter-spacing: .06em; }
+.control-help { position: absolute; left: 50%; bottom: 27px; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: 22px; color: #9ba4b3; font-size: 10px; white-space: nowrap; }
+.control-help span { display: flex; align-items: center; gap: 5px; }
+kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 19px; height: 21px; padding: 0 5px; border: 1px solid rgba(255,255,255,.2); border-radius: 3px; color: #e4e6eb; font: inherit; background: rgba(255,255,255,.06); }
+.crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: rgba(245,226,198,.65); font-size: 20px; pointer-events: none; }
+.interaction-tip { position: absolute; left: 50%; top: calc(50% + 25px); transform: translateX(-50%); color: #e8d6bc; font-size: 11px; letter-spacing: .08em; text-shadow: 0 1px 10px #000; white-space: nowrap; pointer-events: none; }
+.footer-note { position: absolute; right: 26px; bottom: 25px; color: #596171; font-size: 8px; letter-spacing: .2em; }
+.modal-backdrop { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(3,5,10,.68); backdrop-filter: blur(9px); }
+.birthday-modal { position: relative; width: min(470px, 100%); padding: 52px 38px 38px; text-align: center; background: linear-gradient(145deg, rgba(28,33,47,.98), rgba(12,15,24,.98)); border: 1px solid rgba(220,188,143,.38); box-shadow: 0 30px 100px rgba(0,0,0,.55); }
+.close-btn { position: absolute; top: 13px; right: 16px; color: #c6c9d1; background: transparent; border: 0; font-size: 27px; cursor: pointer; }
+.modal-sparkle { color: #e3c49b; letter-spacing: .8em; margin-bottom: 24px; }
+.birthday-modal h2 { font-family: 'Noto Serif SC', serif; font-size: clamp(30px, 5vw, 42px); font-weight: 500; margin: 0 0 18px; color: #f3dfc2; }
+.birthday-modal p { font-size: 13px; line-height: 2; color: #c0c6d2; }
+.cake-emoji { font-size: 44px; margin: 23px 0; filter: drop-shadow(0 0 15px rgba(220,174,112,.2)); }
+.birthday-modal .small-note { color: #8f9aab; font-size: 11px; }
+.modal-btn { margin-top: 18px; }
+@media (max-width: 650px) {
+  .topbar { padding: 0 18px; height: 58px; }
+  .top-tag { display: none; }
+  .welcome-panel { top: 47%; }
+  .control-help { gap: 9px; bottom: 18px; font-size: 9px; }
+  .footer-note { display: none; }
+  .birthday-modal { padding: 45px 24px 28px; }
+}
+
+/* ====== 右下角 BGM 开关 ====== */
+.bgm-toggle {
+  position: absolute;
+  right: 26px;
+  bottom: 52px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: rgba(8, 12, 20, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  color: #c7ced9;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.25s ease;
+  user-select: none;
+  z-index: 20;
+}
+.bgm-toggle:hover {
+  background: rgba(20, 28, 42, 0.85);
+  border-color: rgba(220, 188, 143, 0.5);
+  color: #f3dfc2;
+}
+.bgm-toggle .bgm-icon { font-size: 14px; line-height: 1; }
+.bgm-toggle.on {
+  border-color: rgba(220, 188, 143, 0.45);
+  color: #f3dfc2;
+  box-shadow: 0 0 14px rgba(220, 188, 143, 0.15);
+}
+@media (max-width: 650px) {
+  .bgm-toggle { right: 16px; bottom: 44px; font-size: 9px; padding: 6px 10px; }
+}
+
+/* ====== 移动端虚拟摇杆 ====== */
+.mobile-joystick {
+  position: absolute;
+  left: 24px;
+  bottom: 80px;
+  width: 120px;
+  height: 120px;
+  touch-action: none;
+  z-index: 30;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.joystick-base {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+}
+.joystick-knob {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 35px;
+  left: 35px;
+  border-radius: 50%;
+  background: rgba(255, 220, 170, 0.55);
+  border: 2px solid rgba(255, 220, 170, 0.85);
+  box-shadow: 0 0 18px rgba(255, 200, 140, 0.35);
+  will-change: transform;
+}
+
+/* 手机上"进入房间"按钮隐藏，单独显示一个 */
+.mobile-enter-btn {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  z-index: 25;
+  pointer-events: auto;
+}
+
+/* 手机上隐藏桌面提示 */
+@media (pointer: coarse) {
+  .control-help,
+  .welcome-panel .hint,
+  .welcome-panel button:not(.mobile-enter-btn),
+  .topbar .top-tag {
+    display: none !important;
+  }
+  .welcome-panel {
+    top: 40%;
+    transform: translateY(-50%);
+    text-align: center;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 0 20px;
+  }
+}
+/* ====== 电脑屏幕（Html 组件贴到 3D 里）====== */
+.laptop-screen {
+  width: 340px;
+  height: 260px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1b1a2e 0%, #16213e 60%, #0f3460 100%);
+  border: none;
+  box-shadow: inset 0 0 30px rgba(255, 215, 160, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif SC', serif;
+  color: #f5d9ad;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.laptop-screen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.laptop-screen-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  display: block;
+}
+.laptop-screen-fallback {
+  text-align: center;
+  pointer-events: none;
+}
+.laptop-emoji {
+  font-size: 58px;
+  line-height: 1;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 0 18px rgba(255, 200, 140, 0.5));
+}
+.laptop-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.laptop-sub {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: #c9a377;
+  opacity: 0.85;
+}
+
+/* ===== Modal 里的视频播放器 ===== */
+.modal-video-wrap {
+  width: 100%;
+  max-width: 480px;
+  margin: 16px auto 12px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 220, 180, 0.3);
+}
+.modal-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 60vh;
+  object-fit: contain;
+  background: #000;
+}
+
+/* ===== 电脑封面（温馨小窝风格） ===== */
+.laptop-cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+}
+.laptop-cover .cover-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #080f1a 0%, #0c2a4a 45%, #08111e 100%);
+}
+.laptop-cover .cover-deco {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  font-size: 22px;
+  color: #fff;
+  opacity: 0.65;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.15));
+}
+.laptop-cover .cover-emoji {
+  position: relative;
+  font-size: 42px;
+  line-height: 1;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 12px rgba(0,200,255,0.9)) drop-shadow(0 0 6px rgba(58,122,255,0.8));
+}
+.laptop-cover .cover-title {
+  position: relative;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  color: #6fe0ff;
+  text-shadow: 0 0 10px rgba(0,200,255,0.8), 0 0 20px rgba(0,200,255,0.5);
+}
+.laptop-cover .cover-sub {
+  position: relative;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  opacity: 0.85;
+  color: #9ac4ff;
+  text-shadow: 0 0 6px rgba(154,196,255,0.6);
+}
+.laptop-cover .cover-play {
+  position: relative;
+  margin-top: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0a1524;
+  color: #00c8ff;
+  font-size: 14px;
+  line-height: 34px;
+  text-align: center;
+  padding-left: 3px;
+  border: 2px solid #00c8ff;
+  box-shadow: 0 0 12px rgba(0,200,255,0.9), 0 0 24px rgba(0,200,255,0.5), inset 0 0 8px rgba(0,200,255,0.3);
+}
+
+/* ===== 电脑主页桌面（深夜霓虹风） ===== */
+.laptop-desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+/* 壁纸：深蓝电竞渐变 */
+.laptop-desktop .desk-wallpaper {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(0,200,255,0.30) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(58,122,255,0.40) 0%, transparent 55%),
+    linear-gradient(160deg, #060d18 0%, #0b2038 50%, #061020 100%);
+}
+/* 左上角图标列 */
+.laptop-desktop .desk-icons {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.laptop-desktop .desk-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 36px;
+  cursor: default;
+}
+.laptop-desktop .desk-icon span {
+  font-size: 20px;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(0,200,255,0.6));
+}
+.laptop-desktop .desk-icon em {
+  font-size: 7px;
+  font-style: normal;
+  margin-top: 2px;
+  color: #e0d0ff;
+  text-shadow: 0 0 4px rgba(0,0,0,0.8);
+  letter-spacing: 0.03em;
+}
+/* 右下角小组件 */
+.laptop-desktop .desk-widget {
+  position: absolute;
+  bottom: 22px;
+  right: 10px;
+  text-align: right;
+}
+.laptop-desktop .desk-time {
+  font-size: 18px;
+  font-weight: 600;
+  color: #9ac4ff;
+  text-shadow: 0 0 6px rgba(154,196,255,0.6);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.laptop-desktop .desk-greet {
+  font-size: 7px;
+  margin-top: 3px;
+  color: #9ad8ff;
+  text-shadow: 0 0 6px rgba(0,200,255,0.7);
+  letter-spacing: 0.08em;
+}
+/* 底部任务栏 */
+.laptop-desktop .desk-taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 18px;
+  background: rgba(10, 8, 30, 0.75);
+  backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(0,200,255,0.25);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 9px;
+  gap: 8px;
+}
+.laptop-desktop .tb-start {
+  font-size: 11px;
+  filter: drop-shadow(0 0 3px rgba(0,200,255,0.8));
+}
+.laptop-desktop .tb-dots {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+.laptop-desktop .tb-dots span {
+  font-size: 10px;
+  opacity: 0.55;
+}
+.laptop-desktop .tb-dots span.active {
+  opacity: 1;
+  color: #9ad8ff;
+  filter: drop-shadow(0 0 3px rgba(0,200,255,0.9));
+}
+.laptop-desktop .tb-right {
+  font-size: 8px;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
