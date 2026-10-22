@@ -889,12 +889,15 @@ export default function App() {
   const isMobile = typeof navigator !== 'undefined' &&
     (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 800);
 
+  // ===== 资源前缀：本地是 /，GitHub Pages 是 /22x- =====
+  const ASSET_BASE = import.meta.env.BASE_URL;
+
   // ===== 耳机播放列表（4 首歌）=====
   const HEADPHONE_PLAYLIST = [
-    '/audio/headphone-1-特别的人.mp3',
-    '/audio/headphone-2-麦恩莉.mp3',
-    '/audio/headphone-3-为你写的歌.mp3',
-    '/audio/headphone-4-MyLove.mp3',
+    `${ASSET_BASE}audio/headphone-1-特别的人.mp3`,
+    `${ASSET_BASE}audio/headphone-2-麦恩莉.mp3`,
+    `${ASSET_BASE}audio/headphone-3-为你写的歌.mp3`,
+    `${ASSET_BASE}audio/headphone-4-MyLove.mp3`,
   ];
   const [currentTrack, setCurrentTrack] = useState(0);
   const headphoneAudioRef = useRef(null);
@@ -1094,7 +1097,7 @@ export default function App() {
             {/* 视频播放器：点电脑才开始播放 */}
             <div className="modal-video-wrap">
               <video
-                src="/laptop-screen.mp4"
+                src={`${ASSET_BASE}laptop-screen.mp4`}
                 className="modal-video"
                 controls
                 autoPlay
@@ -1124,7 +1127,7 @@ export default function App() {
           playTrack(next);
         }}
       />
-      <audio ref={bgmAudioRef} src="/bgm.mp3" loop preload="auto" hidden />
+      <audio ref={bgmAudioRef} src={`${ASSET_BASE}bgm.mp3`} loop preload="auto" hidden />
 
       {/* 播放耳机音乐时显示"下一首"按钮 */}
       {locked && musicOn && (
