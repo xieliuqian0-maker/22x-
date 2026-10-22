@@ -886,7 +886,6 @@ export default function App() {
   const [locked, setLocked] = useState(false);
   const [giftOpen, setGiftOpen] = useState(false);
   const [musicOn, setMusicOn] = useState(false);
-  const [bgmOn, setBgmOn] = useState(false);
 
   // ===== 检测是否移动端 =====
   const isMobile = typeof navigator !== 'undefined' &&
@@ -901,7 +900,6 @@ export default function App() {
   ];
   const [currentTrack, setCurrentTrack] = useState(0);
   const headphoneAudioRef = useRef(null);
-  const bgmAudioRef = useRef(null);
 
   // Web Audio fallback（mp3 缺失时合成生日快乐）
   const fallbackRef = useRef({ ctx: null, oscillators: [], timer: null, padTimer: null, masterGain: null, playing: false });
@@ -942,28 +940,6 @@ export default function App() {
     setCurrentTrack(next);
     playTrack(next);
   };
-
-  const toggleBgm = () => {
-    const bgm = bgmAudioRef.current;
-    if (!bgm) return;
-    if (bgmOn) { bgm.pause(); setBgmOn(false); }
-    else { bgm.currentTime = 0; bgm.play().then(() => setBgmOn(true)).catch(err => console.warn(err.message)); }
-  };
-
-  // 进房间自动播放 BGM，退出暂停
-  useEffect(() => {
-    if (locked) {
-      const bgm = bgmAudioRef.current;
-      if (bgm) {
-        bgm.volume = 0.45;
-        bgm.play().then(() => setBgmOn(true)).catch(() => setBgmOn(false));
-      }
-    } else {
-      const bgm = bgmAudioRef.current;
-      if (bgm) { bgm.pause(); bgm.currentTime = 0; }
-      setBgmOn(false);
-    }
-  }, [locked]);
 
   // ===== Web Audio fallback：合成生日快乐 =====
   const startFallback = () => {
@@ -1116,7 +1092,7 @@ export default function App() {
       </div>}
       <footer className="footer-note">BUILT WITH LOVE · NO EXTERNAL 3D ASSETS</footer>
 
-      {/* hidden audio：耳机播放列表 + BGM */}
+      {/* hidden audio：耳机播放列表 */}
       <audio
         ref={headphoneAudioRef}
         preload="auto"
@@ -1127,7 +1103,6 @@ export default function App() {
           playTrack(next);
         }}
       />
-      <audio ref={bgmAudioRef} src={`${ASSET_BASE}bgm.mp3`} loop preload="auto" hidden />
 
       {/* 播放耳机音乐时显示"下一首"按钮 */}
       {locked && musicOn && (
@@ -1138,18 +1113,6 @@ export default function App() {
         >
           <span className="bgm-icon">⏭</span>
           <span className="bgm-label">NEXT · {currentTrack + 1}/{HEADPHONE_PLAYLIST.length}</span>
-        </button>
-      )}
-
-      {/* BGM 开关 */}
-      {locked && (
-        <button
-          className={`bgm-toggle ${bgmOn ? 'on' : ''}`}
-          onClick={toggleBgm}
-          title={bgmOn ? '关闭背景音乐' : '打开背景音乐'}
-        >
-          <span className="bgm-icon">{bgmOn ? '🔊' : '🔇'}</span>
-          <span className="bgm-label">BGM</span>
         </button>
       )}
     </main>
